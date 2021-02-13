@@ -1,0 +1,43 @@
+# Documentation at http://goreleaser.com
+before:
+  hooks:
+    - go mod download
+builds:
+  - env:
+      - CGO_ENABLED=0
+    main: ./cmd/echo-server/main.go
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+archives:
+  - format: binary
+checksum:
+  disable: true
+snapshot:
+  name_template: "{{ .Tag }}-next"
+dockers:
+- image_templates:
+  - "ryancurrah/echo-server:{{ .Version }}-amd64"
+  use_buildx: true
+  goarch: amd64
+  dockerfile: Dockerfile
+  build_flag_templates:
+  - "--platform=linux/amd64"
+- image_templates:
+  - "ryancurrah/echo-server:{{ .Version }}-arm64v8"
+  use_buildx: true
+  goarch: arm64
+  dockerfile: Dockerfile
+  build_flag_templates:
+  - "--platform=linux/arm64/v8"
+docker_manifests:
+- name_template: ryancurrah/echo-server:{{ .Version }}
+  image_templates:
+  - ryancurrah/echo-server:{{ .Version }}-amd64
+  - ryancurrah/echo-server:{{ .Version }}-arm64v8
+- name_template: ryancurrah/echo-server:latest
+  image_templates:
+  - ryancurrah/echo-server:{{ .Version }}-amd64
+  - ryancurrah/echo-server:{{ .Version }}-arm64v8

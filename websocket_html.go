@@ -1,4 +1,4 @@
-package main
+package echoserver
 
 var websocketHTML = `
 <html>
